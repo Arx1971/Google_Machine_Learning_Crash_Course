@@ -9,6 +9,7 @@ import pandas as pd
 from sklearn import metrics
 import tensorflow as tf
 from tensorflow.python.data import Dataset
+from sklearn.model_selection import train_test_split
 
 
 def preprocess_targets(california_housing_dataframe):
@@ -44,5 +45,5 @@ pd.options.display.float_format = '{:.1f}'.format
 california_housing_dataframe = pd.read_csv(
     "https://download.mlcc.google.com/mledu-datasets/california_housing_train.csv", sep=",")
 
-# california_housing_dataframe = california_housing_dataframe.reindex(
-#     np.random.permutation(california_housing_dataframe.index))
+california_housing_dataframe = california_housing_dataframe.reindex(
+    np.random.permutation(california_housing_dataframe.index))
