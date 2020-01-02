@@ -1,7 +1,5 @@
 from __future__ import print_function
-
 import math
-
 from IPython import display
 from matplotlib import cm
 from matplotlib import gridspec
@@ -11,6 +9,27 @@ import pandas as pd
 from sklearn import metrics
 import tensorflow as tf
 from tensorflow.python.data import Dataset
+
+
+def preprocess_features(california_housing_dataframe):
+    features = california_housing_dataframe[[
+        'latitude',
+        'longitude',
+        'housing_median_age',
+        'total_rooms',
+        'total_bedrooms',
+        'population',
+        'households',
+        'median_income'
+    ]]
+
+    processed_features = features.copy()
+
+    processed_features['room_per_person'] = (
+            california_housing_dataframe['total rooms'] / california_housing_dataframe['population'])
+
+    return processed_features
+
 
 tf.logging.set_verbosity(tf.logging.ERROR)
 pd.options.display.max_rows = 10
