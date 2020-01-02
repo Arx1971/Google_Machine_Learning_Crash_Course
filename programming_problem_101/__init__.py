@@ -33,7 +33,7 @@ def preprocess_features(california_housing_dataframe):
     processed_features = features.copy()
 
     processed_features['room_per_person'] = (
-            california_housing_dataframe['total rooms'] / california_housing_dataframe['population'])
+            california_housing_dataframe['total_rooms'] / california_housing_dataframe['population'])
 
     return processed_features
 
@@ -47,3 +47,11 @@ california_housing_dataframe = pd.read_csv(
 
 california_housing_dataframe = california_housing_dataframe.reindex(
     np.random.permutation(california_housing_dataframe.index))
+
+preprocess_data = preprocess_features(california_housing_dataframe)
+preprocess_target = preprocess_targets(california_housing_dataframe)
+
+train_data, train_val, test_data, test_val = train_test_split(preprocess_data, preprocess_target, train_size=0.7,
+                                                              test_size=0.3)
+print(train_data)
+print(train_data.shape)
