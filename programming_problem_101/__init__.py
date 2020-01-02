@@ -11,6 +11,12 @@ import tensorflow as tf
 from tensorflow.python.data import Dataset
 
 
+def preprocess_targets(california_housing_dataframe):
+    targets = pd.DataFrame()
+    targets['median_house_value'] = (california_housing_dataframe["median_house_value"] / 1000.0)
+    return targets
+
+
 def preprocess_features(california_housing_dataframe):
     features = california_housing_dataframe[[
         'latitude',
