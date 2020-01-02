@@ -151,10 +151,10 @@ preprocess_data = preprocess_features(california_housing_dataframe)
 preprocess_target = preprocess_targets(california_housing_dataframe)
 
 train_data, train_val, test_data, test_val = train_test_split(preprocess_data, preprocess_target, train_size=0.7,
-                                                              test_size=0.3)
+                                                              test_size=0.3, random_state=1)
 linear_regressor = train_model(
-    learning_rate=0.00003,
-    steps=500,
+    learning_rate=0.000001,
+    steps=100,
     batch_size=5,
     training_examples=train_data,
     training_targets=test_data,
