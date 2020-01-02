@@ -20,29 +20,6 @@ def train_model(
         training_targets,
         validation_examples,
         validation_targets):
-    """Trains a linear regression model of multiple features.
-
-    In addition to training, this function also prints training progress information,
-    as well as a plot of the training and validation loss over time.
-
-    Args:
-      learning_rate: A `float`, the learning rate.
-      steps: A non-zero `int`, the total number of training steps. A training step
-        consists of a forward and backward pass using a single batch.
-      batch_size: A non-zero `int`, the batch size.
-      training_examples: A `DataFrame` containing one or more columns from
-        `california_housing_dataframe` to use as input features for training.
-      training_targets: A `DataFrame` containing exactly one column from
-        `california_housing_dataframe` to use as target for training.
-      validation_examples: A `DataFrame` containing one or more columns from
-        `california_housing_dataframe` to use as input features for validation.
-      validation_targets: A `DataFrame` containing exactly one column from
-        `california_housing_dataframe` to use as target for validation.
-
-    Returns:
-      A `LinearRegressor` object trained on the training data.
-    """
-
     periods = 10
     steps_per_period = steps / periods
 
@@ -55,9 +32,19 @@ def train_model(
     )
 
     # 1. Create input functions.
-    training_input_fn =  # YOUR CODE HERE
-    predict_training_input_fn =  # YOUR CODE HERE
-    predict_validation_input_fn =  # YOUR CODE HERE
+    training_input_fn = lambda: my_input_fn(
+        training_examples,
+        training_targets["median_house_value"],
+        batch_size=batch_size)
+    predict_training_input_fn = lambda: my_input_fn(
+        training_examples,
+        training_targets["median_house_value"],
+        num_epochs=1,
+        shuffle=False)
+    predict_validation_input_fn = lambda: my_input_fn(
+        validation_examples, validation_targets["median_house_value"],
+        num_epochs=1,
+        shuffle=False)
 
     # Train the model, but do so inside a loop so that we can periodically assess
     # loss metrics.
@@ -72,8 +59,11 @@ def train_model(
             steps=steps_per_period,
         )
         # 2. Take a break and compute predictions.
-        training_predictions =  # YOUR CODE HERE
-        validation_predictions =  # YOUR CODE HERE
+        training_predictions = linear_regressor.predict(input_fn=predict_training_input_fn)
+        training_predictions = np.array([item['predictions'][0] for item in training_predictions])
+
+        validation_predictions = linear_regressor.predict(input_fn=predict_validation_input_fn)
+        validation_predictions = np.array([item['predictions'][0] for item in validation_predictions])
 
         # Compute training and validation loss.
         training_root_mean_squared_error = math.sqrt(
@@ -100,18 +90,6 @@ def train_model(
 
 
 def my_input_fn(features, targets, batch_size=1, shuffle=True, num_epochs=None):
-    """Trains a linear regression model of multiple features.
-
-    Args:
-      features: pandas DataFrame of features
-      targets: pandas DataFrame of targets
-      batch_size: Size of batches to be passed to the model
-      shuffle: True or False. Whether to shuffle the data.
-      num_epochs: Number of epochs for which data should be repeated. None = repeat indefinitely
-    Returns:
-      Tuple of (features, labels) for next data batch
-    """
-
     # Convert pandas data into a dict of np arrays.
     features = {key: np.array(value) for key, value in dict(features).items()}
 
@@ -129,13 +107,6 @@ def my_input_fn(features, targets, batch_size=1, shuffle=True, num_epochs=None):
 
 
 def construct_feature_columns(input_features):
-    """Construct the TensorFlow Feature Columns.
-
-    Args:
-      input_features: The names of the numerical input features to use.
-    Returns:
-      A set of feature columns
-    """
     return set([tf.feature_column.numeric_column(my_feature)
                 for my_feature in input_features])
 
@@ -181,5 +152,31 @@ preprocess_target = preprocess_targets(california_housing_dataframe)
 
 train_data, train_val, test_data, test_val = train_test_split(preprocess_data, preprocess_target, train_size=0.7,
                                                               test_size=0.3)
-print(train_data)
-print(train_data.shape)
+linear_regressor = train_model(
+    learning_rate=0.00003,
+    steps=500,
+    batch_size=5,
+    training_examples=train_data,
+    training_targets=test_data,
+    validation_examples=train_val,
+    validation_targets=test_val)
+
+california_housing_test_data = pd.read_csv(
+    "https://download.mlcc.google.com/mledu-datasets/california_housing_test.csv", sep=",")
+
+test_examples = preprocess_features(california_housing_test_data)
+test_targets = preprocess_targets(california_housing_test_data)
+
+predict_test_input_fn = lambda: my_input_fn(
+    test_examples,
+    test_targets["median_house_value"],
+    num_epochs=1,
+    shuffle=False)
+
+test_predictions = linear_regressor.predict(input_fn=predict_test_input_fn)
+test_predictions = np.array([item['predictions'][0] for item in test_predictions])
+
+root_mean_squared_error = math.sqrt(
+    metrics.mean_squared_error(test_predictions, test_targets))
+
+print("Final RMSE (on test data): %0.2f" % root_mean_squared_error)
