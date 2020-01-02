@@ -8,5 +8,8 @@ df = pd.DataFrame({'City Name': city_names, 'Population': population})
 california_housing_dataframe = pd.read_csv(
     "https://download.mlcc.google.com/mledu-datasets/california_housing_train.csv", sep=",")
 
-plt = california_housing_dataframe.hist('housing_median_age')
-plt.show()
+print(california_housing_dataframe.columns)
+print(california_housing_dataframe.describe())
+
+cities = pd.DataFrame({'City Name': city_names, 'Population': population})
+print(cities)
