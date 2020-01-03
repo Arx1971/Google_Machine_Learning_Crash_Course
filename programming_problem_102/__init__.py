@@ -9,6 +9,7 @@ import pandas as pd
 from sklearn import metrics
 import tensorflow as tf
 from tensorflow.python.data import Dataset
+from sklearn.model_selection import train_test_split
 
 tf.logging.set_verbosity(tf.logging.ERROR)
 pd.options.display.max_rows = 10
@@ -65,20 +66,27 @@ def my_input_fn(features, targets, batch_size=1, shuffle=True, num_epochs=None):
     return features, labels
 
 
-training_examples = preprocess_features(california_housing_dataframe.head(12000))
-training_targets = preprocess_targets(california_housing_dataframe.head(12000))
-validation_examples = preprocess_features(california_housing_dataframe.tail(5000))
-validation_targets = preprocess_targets(california_housing_dataframe.tail(5000))
+preprocess_feature = preprocess_features(california_housing_dataframe=california_housing_dataframe)
+preprocess_target = preprocess_targets(california_housing_dataframe=california_housing_dataframe)
 
-print("Training examples summary:")
-display.display(training_examples.describe())
-print("Validation examples summary:")
-display.display(validation_examples.describe())
+training_examples, validation_examples, training_targets, validation_targets = train_test_split(
+    preprocess_feature, preprocess_target, train_size=12000, test_size=5000, random_state=1
+)
 
-print("Training targets summary:")
-display.display(training_targets.describe())
-print("Validation targets summary:")
-display.display(validation_targets.describe())
+# training_examples = preprocess_features(california_housing_dataframe.head(12000))
+# training_targets = preprocess_targets(california_housing_dataframe.head(12000))
+# validation_examples = preprocess_features(california_housing_dataframe.tail(5000))
+# validation_targets = preprocess_targets(california_housing_dataframe.tail(5000))
+
+# print("Training examples summary:")
+# display.display(training_examples.describe())
+# print("Validation examples summary:")
+# display.display(validation_examples.describe())
+#
+# print("Training targets summary:")
+# display.display(training_targets.describe())
+# print("Validation targets summary:")
+# display.display(validation_targets.describe())
 
 
 def train_model(
