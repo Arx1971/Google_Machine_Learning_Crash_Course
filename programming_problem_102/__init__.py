@@ -73,6 +73,7 @@ training_examples, validation_examples, training_targets, validation_targets = t
     preprocess_feature, preprocess_target, train_size=12000, test_size=5000, random_state=1
 )
 
+
 # training_examples = preprocess_features(california_housing_dataframe.head(12000))
 # training_targets = preprocess_targets(california_housing_dataframe.head(12000))
 # validation_examples = preprocess_features(california_housing_dataframe.tail(5000))
