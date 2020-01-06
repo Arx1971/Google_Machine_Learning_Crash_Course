@@ -6,6 +6,7 @@ from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import norm
+from sklearn.ensemble import RandomForestRegressor
 
 
 def data_preprocess(data):
