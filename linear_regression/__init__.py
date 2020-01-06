@@ -21,6 +21,17 @@ new_train_data = data_preprocess(train_data)
 new_test_data = data_preprocess(test_data)
 
 y = new_train_data['SalePrice']  # this is our target
-features = [
 
+# which feature is had best correlation score
+
+corr_sale = new_train_data.corr().SalePrice
+corr_sale = corr_sale.sort_values(ascending=False)
+
+features = [
+    'OverallQual',
+    '1stFlrSF',
+    'TotalBsmtSF',
+    'YearBuilt',
+    'FullBath',
+    'TotRmsAbvGrd'
 ]
