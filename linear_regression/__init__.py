@@ -38,6 +38,7 @@ features = [
 X = pd.get_dummies(new_train_data[features])
 X = X.fillna(X.mean())
 X = X.reindex(np.random.permutation(X.index))
+
 Y = pd.get_dummies(new_test_data[features])
 Y = Y.fillna(Y.mean)
 X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=0.2, random_state=101)
@@ -47,6 +48,5 @@ model.fit(X_train, Y_train)
 
 prediction = model.predict(Y)
 
-score = model.score(X, Y)
-
-print(score)
+output = pd.DataFrame({'Id': test_data.Id, 'SalePrice': prediction})
+output.to_csv('my_submission.csv', index=False)
